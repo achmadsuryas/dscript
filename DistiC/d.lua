@@ -80,6 +80,23 @@ local function showPlayerSelectionAndTeleport()
             selectionGui:Destroy()
         end)
 
+        -- Tombol untuk menutup GUI dan menghentikan skrip
+        local killButton = Instance.new("TextButton")
+        killButton.Parent = selectionFrame
+        killButton.Text = "Hentikan Skrip"
+        killButton.Size = UDim2.new(0, 280, 0, 30)
+        killButton.Position = UDim2.new(0, 10, 0, 50)  -- Menempatkan tombol di bawah tombol tutup
+        killButton.TextSize = 18
+        killButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        killButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Warna merah untuk tombol tutup
+        
+        -- Aksi ketika tombol Hentikan Skrip diklik
+        killButton.MouseButton1Click:Connect(function()
+            selectionGui:Destroy()
+            screenGui:Destroy()  -- Menghancurkan GUI utama
+            print("Skrip dihentikan.")
+        end)
+
         -- Membuat menu yang bisa dipindah-pindah (draggable)
         local dragging = false
         local dragInput, mousePos, framePos
