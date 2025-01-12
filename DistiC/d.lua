@@ -65,9 +65,13 @@ local function showPlayerSelectionAndTeleport()
     closeButton.TextSize = 18
     closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+    -- Variabel untuk memastikan tombol hanya bisa diklik satu kali saat menu pemilihan pemain terbuka
+    local isMenuOpen = false
     
     -- Menambahkan fungsionalitas untuk menyembunyikan GUI ketika tombol "X" ditekan
     closeButton.MouseButton1Click:Connect(function()
+        isMenuOpen = false
         screenGui:Destroy()  -- Menghapus GUI utama
     end)
 
@@ -105,6 +109,9 @@ local function showPlayerSelectionAndTeleport()
 
     -- Aksi ketika tombol "Teleport" diklik
     button.MouseButton1Click:Connect(function()
+        if isMenuOpen then return end  -- Jika menu pemilihan pemain sudah terbuka, jangan klik lagi
+        isMenuOpen = true
+        
         -- Membuka menu pemilihan pemain
         local playerList = players:GetPlayers()
         local playerNames = {}
@@ -136,45 +143,19 @@ local function showPlayerSelectionAndTeleport()
         scrollFrame.BackgroundTransparency = 1
         
         -- Tombol Hide Menu
-        local closeButton = Instance.new("TextButton")
-        closeButton.Parent = selectionFrame
-        closeButton.Text = "Hide"
-        closeButton.Size = UDim2.new(0, 280, 0, 30)
-        closeButton.Position = UDim2.new(0, 10, 0, 10)
-        closeButton.TextSize = 18
-        closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        local closeSelectionButton = Instance.new("TextButton")
+        closeSelectionButton.Parent = selectionFrame
+        closeSelectionButton.Text = "Hide"
+        closeSelectionButton.Size = UDim2.new(0, 280, 0, 30)
+        closeSelectionButton.Position = UDim2.new(0, 10, 0, 10)
+        closeSelectionButton.TextSize = 18
+        closeSelectionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeSelectionButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         
-        closeButton.MouseButton1Click:Connect(function()
+        closeSelectionButton.MouseButton1Click:Connect(function()
+            isMenuOpen = false
             selectionGui:Destroy()
         end)
-
-        -- Tombol drag untuk menu pilihan pemain
-        local function startPlayerSelectionDrag(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-                dragStart = input.Position
-                startPos = selectionFrame.Position
-            end
-        end
-
-        local function updatePlayerSelectionDrag(input)
-            if dragging and input.UserInputType == Enum.UserInputType.Touch then
-                local delta = input.Position - dragStart
-                selectionFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-            end
-        end
-
-        local function endPlayerSelectionDrag(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-                dragging = false
-            end
-        end
-
-        -- Menghubungkan drag untuk frame pilihan pemain
-        selectionFrame.InputBegan:Connect(startPlayerSelectionDrag)
-        selectionFrame.InputChanged:Connect(updatePlayerSelectionDrag)
-        selectionFrame.InputEnded:Connect(endPlayerSelectionDrag)
 
         -- Menambahkan tombol untuk setiap pemain dalam daftar
         local yPosition = 10
