@@ -224,9 +224,17 @@ local function showPlayerSelectionAndTeleport()
     end)
 end
 
+-- Fungsi untuk menampilkan menu setiap kali karakter pemain direspawn
+local function onCharacterAdded(character)
+    -- Tampilkan GUI kembali setelah respawn
+    showMessage("DistiC X")
+    showPlayerSelectionAndTeleport()
+end
+
+-- Menghubungkan fungsi dengan event CharacterAdded
+localPlayer.CharacterAdded:Connect(onCharacterAdded)
+
 -- Menampilkan pesan "DistiC X" saat pertama kali dijalankan
 showMessage("DistiC X")
-
 -- Menampilkan tombol untuk memilih pemain dan teleportasi
 showPlayerSelectionAndTeleport()
-
