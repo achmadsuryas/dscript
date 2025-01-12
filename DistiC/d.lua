@@ -34,7 +34,7 @@ local function showPlayerSelectionAndTeleport()
     
     local button = Instance.new("TextButton")
     button.Parent = screenGui
-    button.Text = "Pilih Pemain untuk Teleport"
+    button.Text = "USER"
     button.Size = UDim2.new(0, 200, 0, 50)
     button.Position = UDim2.new(0.5, -100, 0.5, 50)  -- Menempatkan tombol di bawah pesan
     button.TextSize = 24
@@ -60,11 +60,76 @@ local function showPlayerSelectionAndTeleport()
         
         local selectionFrame = Instance.new("Frame")
         selectionFrame.Parent = selectionGui
-        selectionFrame.Size = UDim2.new(0, 300, 0, #playerNames * 40 + 50)  -- Ukuran frame berdasarkan jumlah pemain
+        selectionFrame.Size = UDim2.new(0, 300, 0, #playerNames * 40 + 100)  -- Ukuran frame berdasarkan jumlah pemain
         selectionFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
         selectionFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        selectionFrame.BorderSizePixel = 2  -- Border untuk frame kotak
         
-        local yPosition = 10
+        -- Tombol Tutup Menu
+        local closeButton = Instance.new("TextButton")
+        closeButton.Parent = selectionFrame
+        closeButton.Text = "Tutup"
+        closeButton.Size = UDim2.new(0, 280, 0, 30)
+        closeButton.Position = UDim2.new(0, 10, 0, 10)  -- Menempatkan tombol tutup di atas
+        closeButton.TextSize = 18
+        closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Warna merah untuk tombol tutup
+        
+        -- Aksi ketika tombol tutup diklik
+        closeButton.MouseButton1Click:Connect(function()
+            selectionGui:Destroy()
+        end)
+
+        -- Membuat menu yang bisa dipindah-pindah (draggable)
+        local dragging = false
+        local dragInput, mousePos, framePos
+
+        -- Untuk desktop (mouse)
+        selectionFrame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = true
+                mousePos = input.Position
+                framePos = selectionFrame.Position
+            end
+        end)
+
+        selectionFrame.InputChanged:Connect(function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                local delta = input.Position - mousePos
+                selectionFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            end
+        end)
+
+        selectionFrame.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = false
+            end
+        end)
+
+        -- Untuk perangkat seluler (touch)
+        selectionFrame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                mousePos = input.Position
+                framePos = selectionFrame.Position
+            end
+        end)
+
+        selectionFrame.InputChanged:Connect(function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.Touch then
+                local delta = input.Position - mousePos
+                selectionFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            end
+        end)
+
+        selectionFrame.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                dragging = false
+            end
+        end)
+
+        -- Menambahkan tombol untuk setiap pemain dalam daftar
+        local yPosition = 50
         for _, name in ipairs(playerNames) do
             local playerButton = Instance.new("TextButton")
             playerButton.Parent = selectionFrame
