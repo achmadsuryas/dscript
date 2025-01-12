@@ -27,12 +27,26 @@ local function showMessage(message)
     textLabel:Destroy()  -- Menghapus TextLabel setelah pesan muncul
 end
 
+-- Fungsi untuk mendapatkan foto profil pemain dari ID Roblox mereka
+local function getPlayerProfileImage(player)
+    local success, result = pcall(function()
+        return players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+    end)
+
+    if success then
+        return result
+    else
+        return "rbxassetid://1234567890"  -- Gambar default jika gagal mendapatkan foto profil
+    end
+end
+
 -- Fungsi untuk menampilkan tombol pilih pemain dan teleportasi
 local function showPlayerSelectionAndTeleport()
-    -- Membuat tombol baru
+    -- Membuat GUI utama
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = localPlayer.PlayerGui  -- Memasukkan GUI ke PlayerGui
     
+    -- Membuat tombol "USER"
     local button = Instance.new("TextButton")
     button.Parent = screenGui
     button.Text = "USER"
@@ -42,6 +56,21 @@ local function showPlayerSelectionAndTeleport()
     button.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Warna teks putih
     button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Warna tombol hitam
     
+    -- Membuat tombol "X" di sebelah kiri "USER"
+    local closeButton = Instance.new("TextButton")
+    closeButton.Parent = button
+    closeButton.Text = "X"
+    closeButton.Size = UDim2.new(0, 40, 0, 30)
+    closeButton.Position = UDim2.new(0, -40, 0, 10)  -- Posisi tombol "X" di kiri tombol "USER"
+    closeButton.TextSize = 18
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    
+    -- Menambahkan fungsionalitas untuk menyembunyikan GUI ketika tombol "X" ditekan
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()  -- Menghapus GUI utama
+    end)
+
     -- Fitur Drag untuk tombol "USER" di perangkat mobile
     local dragging = false
     local dragStart = nil
@@ -71,7 +100,7 @@ local function showPlayerSelectionAndTeleport()
         end
     end)
 
-    -- Aksi ketika tombol diklik
+    -- Aksi ketika tombol "USER" diklik
     button.MouseButton1Click:Connect(function()
         -- Membuka menu pemilihan pemain
         local playerList = players:GetPlayers()
@@ -129,10 +158,28 @@ local function showPlayerSelectionAndTeleport()
             playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             playerButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
             
+            -- Menambahkan foto profil pemain
+            local profileImage = Instance.new("ImageLabel")
+            profileImage.Parent = playerButton
+            profileImage.Size = UDim2.new(0, 30, 0, 30)
+            profileImage.Position = UDim2.new(0, 10, 0, 5)
+            profileImage.Image = getPlayerProfileImage(players:FindFirstChild(name))
+            
             playerButton.MouseButton1Click:Connect(function()
                 -- Menghapus GUI pilihan pemain setelah pemilihan
                 selectionGui:Destroy()
                 print("Pemain yang dipilih: " .. name)
+                
+                -- Mencari pemain yang dipilih
+                local targetPlayer = players:FindFirstChild(name)
+                if targetPlayer then
+                    -- Teleport pemain yang menjalankan skrip ke pemain yang dipilih
+                    local targetCharacter = targetPlayer.Character
+                    if targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart") then
+                        local targetPosition = targetCharacter.HumanoidRootPart.Position
+                        localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPosition + Vector3.new(0, 5, 0))  -- Sedikit mengangkat posisi teleportasi
+                    end
+                end
             end)
             
             yPosition = yPosition + 45  -- Mengatur posisi tombol untuk pemain berikutnya
