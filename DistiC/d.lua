@@ -46,22 +46,22 @@ local function showPlayerSelectionAndTeleport()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = localPlayer.PlayerGui  -- Memasukkan GUI ke PlayerGui
     
-    -- Membuat tombol "USER"
+    -- Membuat tombol "Teleport"
     local button = Instance.new("TextButton")
     button.Parent = screenGui
-    button.Text = "USER"
+    button.Text = "Teleport"
     button.Size = UDim2.new(0, 200, 0, 50)
     button.Position = UDim2.new(0.5, -100, 0.5, 50)  -- Menempatkan tombol di bawah pesan
-    button.TextSize = 24
+    button.TextSize = 18
     button.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Warna teks putih
     button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Warna tombol hitam
     
-    -- Membuat tombol "X" di sebelah kiri "USER"
+    -- Membuat tombol "X" di sebelah kiri "Teleport"
     local closeButton = Instance.new("TextButton")
     closeButton.Parent = button
     closeButton.Text = "X"
     closeButton.Size = UDim2.new(0, 40, 0, 30)
-    closeButton.Position = UDim2.new(0, -40, 0, 10)  -- Posisi tombol "X" di kiri tombol "USER"
+    closeButton.Position = UDim2.new(0, -40, 0, 10)  -- Posisi tombol "X" di kiri tombol "Teleport"
     closeButton.TextSize = 18
     closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
@@ -71,36 +71,39 @@ local function showPlayerSelectionAndTeleport()
         screenGui:Destroy()  -- Menghapus GUI utama
     end)
 
-    -- Fitur Drag untuk tombol "USER" di perangkat mobile
+    -- Fitur Drag untuk tombol "Teleport" di perangkat mobile
     local dragging = false
     local dragStart = nil
     local startPos = nil
 
-    -- Ketika sentuhan dimulai
-    button.InputBegan:Connect(function(input)
+    -- Fungsi untuk drag pada GUI
+    local function startDrag(input)
         if input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = button.Position
         end
-    end)
+    end
 
-    -- Ketika posisi sentuhan berubah
-    button.InputChanged:Connect(function(input)
+    local function updateDrag(input)
         if dragging and input.UserInputType == Enum.UserInputType.Touch then
             local delta = input.Position - dragStart
             button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
-    end)
+    end
 
-    -- Ketika sentuhan berakhir
-    button.InputEnded:Connect(function(input)
+    local function endDrag(input)
         if input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
         end
-    end)
+    end
 
-    -- Aksi ketika tombol "USER" diklik
+    -- Menghubungkan drag untuk tombol Teleport
+    button.InputBegan:Connect(startDrag)
+    button.InputChanged:Connect(updateDrag)
+    button.InputEnded:Connect(endDrag)
+
+    -- Aksi ketika tombol "Teleport" diklik
     button.MouseButton1Click:Connect(function()
         -- Membuka menu pemilihan pemain
         local playerList = players:GetPlayers()
@@ -132,10 +135,10 @@ local function showPlayerSelectionAndTeleport()
         scrollFrame.ScrollingEnabled = true
         scrollFrame.BackgroundTransparency = 1
         
-        -- Tombol Tutup Menu
+        -- Tombol Hide Menu
         local closeButton = Instance.new("TextButton")
         closeButton.Parent = selectionFrame
-        closeButton.Text = "Tutup"
+        closeButton.Text = "Hide"
         closeButton.Size = UDim2.new(0, 280, 0, 30)
         closeButton.Position = UDim2.new(0, 10, 0, 10)
         closeButton.TextSize = 18
@@ -145,7 +148,34 @@ local function showPlayerSelectionAndTeleport()
         closeButton.MouseButton1Click:Connect(function()
             selectionGui:Destroy()
         end)
-        
+
+        -- Tombol drag untuk menu pilihan pemain
+        local function startPlayerSelectionDrag(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                dragStart = input.Position
+                startPos = selectionFrame.Position
+            end
+        end
+
+        local function updatePlayerSelectionDrag(input)
+            if dragging and input.UserInputType == Enum.UserInputType.Touch then
+                local delta = input.Position - dragStart
+                selectionFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end
+
+        local function endPlayerSelectionDrag(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                dragging = false
+            end
+        end
+
+        -- Menghubungkan drag untuk frame pilihan pemain
+        selectionFrame.InputBegan:Connect(startPlayerSelectionDrag)
+        selectionFrame.InputChanged:Connect(updatePlayerSelectionDrag)
+        selectionFrame.InputEnded:Connect(endPlayerSelectionDrag)
+
         -- Menambahkan tombol untuk setiap pemain dalam daftar
         local yPosition = 10
         for _, name in ipairs(playerNames) do
