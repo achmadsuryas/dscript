@@ -43,9 +43,6 @@ local function showPlayerSelectionAndTeleport()
     
     -- Aksi ketika tombol diklik
     button.MouseButton1Click:Connect(function()
-        -- Menghapus tombol setelah diklik
-        screenGui:Destroy()
-
         -- Membuka menu pemilihan pemain
         local playerList = players:GetPlayers()
         local playerNames = {}
