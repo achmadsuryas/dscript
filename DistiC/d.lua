@@ -212,6 +212,8 @@ local function showPlayerSelectionAndTeleport()
                         if targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart") then
                             local targetPosition = targetCharacter.HumanoidRootPart.Position
                             localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPosition + Vector3.new(0, 5, 0))  -- Sedikit mengangkat posisi teleportasi
+                            
+                            teleportEnabled = true  -- Tombol teleport bisa digunakan lagi setelah teleportasi
                         end
                     end
                 end)
@@ -227,3 +229,4 @@ showMessage("DistiC X")
 
 -- Menampilkan tombol untuk memilih pemain dan teleportasi
 showPlayerSelectionAndTeleport()
+
