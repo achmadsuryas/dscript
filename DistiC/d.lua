@@ -24,7 +24,7 @@ local function showMessage(message)
 	textLabel:Destroy()
 end
 
--- Membuat Main Menu dengan navbar di dalam kotak
+-- Fungsi untuk membuat dan menampilkan menu utama
 local function mainMenu()
 	if localPlayer:WaitForChild("PlayerGui"):FindFirstChild("DistiCXMenu") then
 		return -- Jangan buat ulang jika sudah ada
@@ -35,7 +35,7 @@ local function mainMenu()
 	screenGui.ResetOnSpawn = false -- Agar GUI tidak dihapus saat respawn
 	screenGui.Parent = localPlayer:WaitForChild("PlayerGui")
 
-	-- Membuat Frame utama (Main Menu)
+	-- Frame utama (Main Menu)
 	local mainMenuFrame = Instance.new("Frame")
 	mainMenuFrame.Parent = screenGui
 	mainMenuFrame.Size = UDim2.new(0, 400, 0, 300)
@@ -54,7 +54,7 @@ local function mainMenu()
 	local navbarLabel = Instance.new("TextLabel")
 	navbarLabel.Parent = navbar
 	navbarLabel.Text = "DistiC X - 0.1"
-	navbarLabel.Size = UDim2.new(1, -50, 1, 0) -- Berikan ruang untuk tombol "-" di kanan
+	navbarLabel.Size = UDim2.new(1, -50, 1, 0)
 	navbarLabel.Position = UDim2.new(0, 0, 0, 0)
 	navbarLabel.TextSize = 24
 	navbarLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -126,12 +126,41 @@ local function mainMenu()
 			isDragging = false
 		end
 	end)
+
+	-- TextBox untuk Speed Hack
+	local speedLabel = Instance.new("TextLabel")
+	speedLabel.Parent = mainMenuFrame
+	speedLabel.Text = "Speed Hack"
+	speedLabel.Size = UDim2.new(0, 100, 0, 30)
+	speedLabel.Position = UDim2.new(0, 10, 0, 60)
+	speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	speedLabel.BackgroundTransparency = 1
+	speedLabel.Font = Enum.Font.GothamBold
+	speedLabel.TextSize = 18
+
+	local speedInput = Instance.new("TextBox")
+	speedInput.Parent = mainMenuFrame
+	speedInput.Size = UDim2.new(0, 100, 0, 30)
+	speedInput.Position = UDim2.new(0, 120, 0, 60)
+	speedInput.Text = "16" -- Default speed
+	speedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+	speedInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	speedInput.Font = Enum.Font.GothamBold
+	speedInput.TextSize = 18
+	speedInput.ClearTextOnFocus = false
+
+	-- Mengubah kecepatan pemain sesuai dengan input
+	speedInput.FocusLost:Connect(function()
+		local speedValue = tonumber(speedInput.Text)
+		if speedValue then
+			localPlayer.Character.Humanoid.WalkSpeed = speedValue
+		end
+	end)
 end
+
 showMessage("DistiC X")
 mainMenu()
 
 localPlayer.CharacterAdded:Connect(function()
-	-- Periksa dan buat ulang GUI jika belum ada
 	mainMenu()
 end)
-
