@@ -59,7 +59,7 @@ local function showPlayerSelectionAndTeleport()
     button.Text = "Teleport"
     button.Size = UDim2.new(0, 200, 0, 50)
     button.Position = UDim2.new(0.5, -100, 0.5, 50)  -- Menempatkan tombol di bawah pesan
-    button.TextSize = 10
+    button.TextSize = 18
     button.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Warna teks putih
     button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Warna tombol hitam
     
@@ -69,7 +69,7 @@ local function showPlayerSelectionAndTeleport()
     closeButton.Text = "X"
     closeButton.Size = UDim2.new(0, 50, 0, 50)  -- Menyelaraskan ukuran tombol X
     closeButton.Position = UDim2.new(0, -50, 0, 0)  -- Posisi tombol "X" di kiri tombol "Teleport"
-    closeButton.TextSize = 10
+    closeButton.TextSize = 18
     closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     
