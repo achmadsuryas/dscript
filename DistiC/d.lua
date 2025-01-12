@@ -1,6 +1,7 @@
 -- Mendapatkan referensi ke layanan yang dibutuhkan
 local players = game:GetService("Players")
 local localPlayer = players.LocalPlayer
+local HttpService = game:GetService("HttpService")
 
 -- Fungsi untuk menampilkan pesan di layar
 local function showMessage(message)
@@ -24,6 +25,19 @@ local function showMessage(message)
     -- Menambahkan efek untuk durasi pesan muncul (misalnya, 3 detik)
     wait(3)  -- Menunggu selama 3 detik
     textLabel:Destroy()  -- Menghapus TextLabel setelah pesan muncul
+end
+
+-- Fungsi untuk mendapatkan foto profil pemain dari ID Roblox mereka
+local function getPlayerProfileImage(player)
+    local success, result = pcall(function()
+        return players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+    end)
+
+    if success then
+        return result
+    else
+        return "rbxassetid://1234567890"  -- Gambar default jika gagal mendapatkan foto profil
+    end
 end
 
 -- Fungsi untuk menampilkan tombol pilih pemain dan teleportasi
@@ -60,95 +74,65 @@ local function showPlayerSelectionAndTeleport()
         
         local selectionFrame = Instance.new("Frame")
         selectionFrame.Parent = selectionGui
-        selectionFrame.Size = UDim2.new(0, 300, 0, #playerNames * 40 + 100)  -- Ukuran frame berdasarkan jumlah pemain
+        selectionFrame.Size = UDim2.new(0, 300, 0, 400)  -- Ukuran frame yang lebih besar dan bisa scroll
         selectionFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
         selectionFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        selectionFrame.BorderSizePixel = 2  -- Border untuk frame kotak
+        selectionFrame.BorderSizePixel = 2
+        
+        local scrollFrame = Instance.new("ScrollingFrame")
+        scrollFrame.Parent = selectionFrame
+        scrollFrame.Size = UDim2.new(1, 0, 1, -50)  -- Ukuran untuk area scroll
+        scrollFrame.Position = UDim2.new(0, 0, 0, 50)
+        scrollFrame.CanvasSize = UDim2.new(0, 0, 0, #playerNames * 45 + 100)
+        scrollFrame.ScrollingEnabled = true
+        scrollFrame.BackgroundTransparency = 1
         
         -- Tombol Tutup Menu
         local closeButton = Instance.new("TextButton")
         closeButton.Parent = selectionFrame
         closeButton.Text = "Tutup"
         closeButton.Size = UDim2.new(0, 280, 0, 30)
-        closeButton.Position = UDim2.new(0, 10, 0, 10)  -- Menempatkan tombol tutup di atas
+        closeButton.Position = UDim2.new(0, 10, 0, 10)
         closeButton.TextSize = 18
         closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Warna merah untuk tombol tutup
+        closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         
-        -- Aksi ketika tombol tutup diklik
         closeButton.MouseButton1Click:Connect(function()
             selectionGui:Destroy()
         end)
-
-        -- Tombol untuk menutup GUI dan menghentikan skrip
-        local killButton = Instance.new("TextButton")
-        killButton.Parent = selectionFrame
-        killButton.Text = "Hentikan Skrip"
-        killButton.Size = UDim2.new(0, 280, 0, 30)
-        killButton.Position = UDim2.new(0, 10, 0, 50)  -- Menempatkan tombol di bawah tombol tutup
-        killButton.TextSize = 18
-        killButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        killButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Warna merah untuk tombol tutup
         
-        -- Aksi ketika tombol Hentikan Skrip diklik
-        killButton.MouseButton1Click:Connect(function()
-            selectionGui:Destroy()
-            screenGui:Destroy()  -- Menghancurkan GUI utama
-            print("Skrip dihentikan.")
-        end)
-
-        -- Membuat menu yang bisa dipindah-pindah (draggable)
-        local dragging = false
-        local dragInput, mousePos, framePos
-
-        -- Fungsi untuk menangani dragging
-        local function beginDrag(input)
-            dragging = true
-            mousePos = input.Position
-            framePos = selectionFrame.Position
-        end
+        -- Tombol untuk keluar dari skrip (X)
+        local exitButton = Instance.new("TextButton")
+        exitButton.Parent = selectionFrame
+        exitButton.Text = "X"
+        exitButton.Size = UDim2.new(0, 40, 0, 30)
+        exitButton.Position = UDim2.new(1, -50, 0, 10)
+        exitButton.TextSize = 18
+        exitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        exitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         
-        local function updateDrag(input)
-            if dragging then
-                local delta = input.Position - mousePos
-                selectionFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
-            end
-        end
-        
-        local function endDrag(input)
-            dragging = false
-        end
-
-        -- Untuk desktop (mouse) dan perangkat seluler (touch)
-        selectionFrame.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                beginDrag(input)
-            end
-        end)
-
-        selectionFrame.InputChanged:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                updateDrag(input)
-            end
-        end)
-
-        selectionFrame.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                endDrag(input)
-            end
+        exitButton.MouseButton1Click:Connect(function()
+            game:Shutdown()  -- Menutup game dan menghentikan skrip
         end)
 
         -- Menambahkan tombol untuk setiap pemain dalam daftar
-        local yPosition = 50
+        local yPosition = 10
         for _, name in ipairs(playerNames) do
             local playerButton = Instance.new("TextButton")
-            playerButton.Parent = selectionFrame
+            playerButton.Parent = scrollFrame
             playerButton.Text = name
             playerButton.Size = UDim2.new(0, 280, 0, 40)
             playerButton.Position = UDim2.new(0, 10, 0, yPosition)
             playerButton.TextSize = 20
             playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             playerButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            
+            -- Menambahkan foto profil pemain
+            local profileImage = Instance.new("ImageLabel")
+            profileImage.Parent = playerButton
+            profileImage.Size = UDim2.new(0, 30, 0, 30)
+            profileImage.Position = UDim2.new(0, 10, 0, 5)
+            profileImage.Image = getPlayerProfileImage(players:FindFirstChild(name))
             
             playerButton.MouseButton1Click:Connect(function()
                 -- Menghapus GUI pilihan pemain setelah pemilihan
