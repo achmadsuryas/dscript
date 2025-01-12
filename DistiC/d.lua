@@ -112,7 +112,7 @@ local function showPlayerSelectionAndTeleport()
         exitButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         
         exitButton.MouseButton1Click:Connect(function()
-            game:Shutdown()  -- Menutup game dan menghentikan skrip
+            selectionGui.Visible = false  -- Menyembunyikan menu
         end)
 
         -- Menambahkan tombol untuk setiap pemain dalam daftar
@@ -153,6 +153,32 @@ local function showPlayerSelectionAndTeleport()
             
             yPosition = yPosition + 45  -- Mengatur posisi tombol untuk pemain berikutnya
         end
+
+        -- Menambahkan fitur drag untuk menu di perangkat mobile
+        local dragging = false
+        local dragStart = nil
+        local startPos = nil
+
+        selectionFrame.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                dragStart = input.Position
+                startPos = selectionFrame.Position
+            end
+        end)
+
+        selectionFrame.InputChanged:Connect(function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.Touch then
+                local delta = input.Position - dragStart
+                selectionFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end)
+
+        selectionFrame.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                dragging = false
+            end
+        end)
     end)
 end
 
