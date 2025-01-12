@@ -84,47 +84,40 @@ local function showPlayerSelectionAndTeleport()
         local dragging = false
         local dragInput, mousePos, framePos
 
-        -- Untuk desktop (mouse)
+        -- Fungsi untuk menangani dragging
+        local function beginDrag(input)
+            dragging = true
+            mousePos = input.Position
+            framePos = selectionFrame.Position
+        end
+        
+        local function updateDrag(input)
+            if dragging then
+                local delta = input.Position - mousePos
+                selectionFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            end
+        end
+        
+        local function endDrag(input)
+            dragging = false
+        end
+
+        -- Untuk desktop (mouse) dan perangkat seluler (touch)
         selectionFrame.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = true
-                mousePos = input.Position
-                framePos = selectionFrame.Position
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                beginDrag(input)
             end
         end)
 
         selectionFrame.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local delta = input.Position - mousePos
-                selectionFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                updateDrag(input)
             end
         end)
 
         selectionFrame.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = false
-            end
-        end)
-
-        -- Untuk perangkat seluler (touch)
-        selectionFrame.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-                mousePos = input.Position
-                framePos = selectionFrame.Position
-            end
-        end)
-
-        selectionFrame.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.Touch then
-                local delta = input.Position - mousePos
-                selectionFrame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
-            end
-        end)
-
-        selectionFrame.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Touch then
-                dragging = false
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                endDrag(input)
             end
         end)
 
