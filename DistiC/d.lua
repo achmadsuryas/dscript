@@ -5,12 +5,6 @@ local HttpService = game:GetService("HttpService")
 
 -- Fungsi untuk menampilkan pesan di layar
 local function showMessage(message)
-    -- Cek jika GUI sudah ada
-    local existingGui = localPlayer.PlayerGui:FindFirstChild("MessageGui")
-    if existingGui then
-        existingGui:Destroy()  -- Hapus jika sudah ada
-    end
-
     -- Membuat GUI baru
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "MessageGui"
