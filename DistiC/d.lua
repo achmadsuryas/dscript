@@ -1,4 +1,3 @@
--- Mendapatkan referensi ke layanan yang dibutuhkan
 local players = game:GetService("Players")
 local localPlayer = players.LocalPlayer
 local HttpService = game:GetService("HttpService")
@@ -20,17 +19,16 @@ local function showMessage(message)
     local textLabel = Instance.new("TextLabel")
     textLabel.Parent = screenGui
     textLabel.Text = message  -- Menampilkan pesan yang diberikan
-    textLabel.Size = UDim2.new(0, 400, 0, 50)  -- Menentukan ukuran TextLabel
+    textLabel.Size = UDim2.new(0, 200, 0, 25)  -- 400 50
     textLabel.Position = UDim2.new(0.5, -200, 0.5, -25)  -- Menempatkan TextLabel di tengah layar
-    textLabel.TextSize = 24  -- Ukuran teks
+    textLabel.TextSize = 10  -- Ukuran teks 24
     textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Warna teks merah
     textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Warna background hitam
     textLabel.TextStrokeTransparency = 0  -- Menambahkan stroke untuk teks yang lebih jelas
     textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)  -- Warna stroke hitam
     
-    -- Menambahkan efek untuk durasi pesan muncul (misalnya, 3 detik)
-    wait(5)  -- Menunggu selama 3 detik
-    textLabel:Destroy()  -- Menghapus TextLabel setelah pesan muncul
+    wait(5)
+    textLabel:Destroy()
 end
 
 -- Fungsi untuk mendapatkan foto profil pemain dari ID Roblox mereka
@@ -57,9 +55,9 @@ local function showPlayerSelectionAndTeleport()
     local button = Instance.new("TextButton")
     button.Parent = screenGui
     button.Text = "Teleport"
-    button.Size = UDim2.new(0, 200, 0, 50)
+    button.Size = UDim2.new(0, 100, 0, 25) -- 200 50
     button.Position = UDim2.new(0.5, -100, 0.5, 50)  -- Menempatkan tombol di bawah pesan
-    button.TextSize = 18
+    button.TextSize = 10 --18
     button.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Warna teks putih
     button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Warna tombol hitam
     
@@ -67,9 +65,9 @@ local function showPlayerSelectionAndTeleport()
     local closeButton = Instance.new("TextButton")
     closeButton.Parent = button
     closeButton.Text = "X"
-    closeButton.Size = UDim2.new(0, 50, 0, 50)  -- Menyelaraskan ukuran tombol X
+    closeButton.Size = UDim2.new(0, 42, 0, 42)  -- Menyelaraskan ukuran tombol X 50 50
     closeButton.Position = UDim2.new(0, -50, 0, 0)  -- Posisi tombol "X" di kiri tombol "Teleport"
-    closeButton.TextSize = 18
+    closeButton.TextSize = 10 --18
     closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     
