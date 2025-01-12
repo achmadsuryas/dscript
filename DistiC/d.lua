@@ -5,8 +5,15 @@ local HttpService = game:GetService("HttpService")
 
 -- Fungsi untuk menampilkan pesan di layar
 local function showMessage(message)
+    -- Cek jika GUI sudah ada
+    local existingGui = localPlayer.PlayerGui:FindFirstChild("MessageGui")
+    if existingGui then
+        existingGui:Destroy()  -- Hapus jika sudah ada
+    end
+
     -- Membuat GUI baru
     local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "MessageGui"
     screenGui.Parent = localPlayer.PlayerGui  -- Memasukkan GUI ke PlayerGui
     
     -- Membuat TextLabel untuk menampilkan pesan
@@ -43,6 +50,7 @@ end
 local function showPlayerSelectionAndTeleport()
     -- Membuat GUI utama
     local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TeleportGui"
     screenGui.Parent = localPlayer.PlayerGui  -- Memasukkan GUI ke PlayerGui
     
     -- Membuat tombol "Teleport"
@@ -152,33 +160,6 @@ local function showPlayerSelectionAndTeleport()
                 selectionGui:Destroy()
                 teleportEnabled = true  -- Menyebabkan tombol teleport dapat ditekan lagi setelah menu ditutup
             end)
-
-            -- Tombol drag untuk menu pilihan pemain
-            local function startPlayerSelectionDrag(input)
-                if input.UserInputType == Enum.UserInputType.Touch then
-                    dragging = true
-                    dragStart = input.Position
-                    startPos = selectionFrame.Position
-                end
-            end
-
-            local function updatePlayerSelectionDrag(input)
-                if dragging and input.UserInputType == Enum.UserInputType.Touch then
-                    local delta = input.Position - dragStart
-                    selectionFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-                end
-            end
-
-            local function endPlayerSelectionDrag(input)
-                if input.UserInputType == Enum.UserInputType.Touch then
-                    dragging = false
-                end
-            end
-
-            -- Menghubungkan drag untuk frame pilihan pemain
-            selectionFrame.InputBegan:Connect(startPlayerSelectionDrag)
-            selectionFrame.InputChanged:Connect(updatePlayerSelectionDrag)
-            selectionFrame.InputEnded:Connect(endPlayerSelectionDrag)
 
             -- Menambahkan tombol untuk setiap pemain dalam daftar
             local yPosition = 10
