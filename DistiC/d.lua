@@ -1,6 +1,3 @@
--- DistiC X
--- XDistiCX on Roblox
-
 local players = game:GetService("Players")
 local localPlayer = players.LocalPlayer
 local HttpService = game:GetService("HttpService")
